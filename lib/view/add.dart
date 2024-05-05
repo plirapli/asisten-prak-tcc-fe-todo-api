@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:prak_tcc_fe_mobile/util/todo.dart';
 
@@ -17,8 +16,8 @@ class _AddPageState extends State<AddPage> {
   };
   final TextEditingController _title = TextEditingController();
   final TextEditingController _isi = TextEditingController();
-  String msg = "";
   bool isError = false;
+  String msg = "";
 
   Future<void> _addHandler(BuildContext context) async {
     try {
@@ -36,7 +35,7 @@ class _AddPageState extends State<AddPage> {
         throw Exception(msg);
       }
     } catch (e) {
-      setState(() => isError = false);
+      setState(() => isError = true);
       SnackBar snackBar = SnackBar(content: Text(e.toString()));
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
