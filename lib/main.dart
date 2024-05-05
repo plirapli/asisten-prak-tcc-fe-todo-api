@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Prak. TCC - Web Service',
       theme: themeData,
       home: const HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
