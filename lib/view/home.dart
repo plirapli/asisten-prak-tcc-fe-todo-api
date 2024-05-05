@@ -5,8 +5,7 @@ import 'package:prak_tcc_fe_mobile/view/add.dart';
 import 'package:prak_tcc_fe_mobile/view/edit.dart';
 
 class HomePage extends StatefulWidget {
-  final int page;
-  const HomePage({super.key, this.page = 1});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -73,14 +72,13 @@ class _HomePageState extends State<HomePage> {
   List<TodoItem> todoList = [];
 
   void _search(String val) {
-    setState(() {
-      keyword = val;
-      filteredTodo = todoList
-          .where((item) =>
-              (item.title!.toLowerCase()).contains(val.toLowerCase()) ||
-              (item.isi!.toLowerCase()).contains(val.toLowerCase()))
-          .toList();
-    });
+    keyword = val;
+    filteredTodo = todoList
+        .where((item) =>
+            (item.title!.toLowerCase()).contains(val.toLowerCase()) ||
+            (item.isi!.toLowerCase()).contains(val.toLowerCase()))
+        .toList();
+    setState(() {});
   }
 
   Widget _heading(BuildContext context) {
@@ -134,17 +132,14 @@ class _HomePageState extends State<HomePage> {
     return Expanded(
       child: FutureBuilder(
         future: _future,
-        builder: (
-          BuildContext context,
-          AsyncSnapshot<dynamic> snapshot,
-        ) {
+        builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text("Error");
           } else if (snapshot.hasData) {
             Todos todoModel = Todos.fromJson(snapshot.data);
             // Memasukkan list todo ke dalam todoList biar bisa di-search
             todoList = [...?todoModel.data];
-            return _buildSuccessSection(context, todoModel);
+            return _buildSuccess(context, todoModel);
           }
           return const Center(child: CircularProgressIndicator());
         },
@@ -152,7 +147,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSuccessSection(BuildContext context, Todos data) {
+  Widget _buildSuccess(BuildContext context, Todos data) {
     return (keyword != "" && filteredTodo.isEmpty)
         ? Container(
             margin: const EdgeInsets.only(top: 12),
