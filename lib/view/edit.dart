@@ -1,11 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:prak_tcc_fe_mobile/model/todo.dart';
 import 'package:prak_tcc_fe_mobile/util/todo.dart';
-import 'package:prak_tcc_fe_mobile/view/home.dart';
 
 class EditPage extends StatefulWidget {
   final int id;
@@ -16,9 +12,41 @@ class EditPage extends StatefulWidget {
 }
 
 class _EditPageState extends State<EditPage> {
+  final Map<String, Color> errColor = {
+    "bg": const Color.fromARGB(255, 255, 225, 230),
+    "reg": Colors.red.shade800
+  };
   final TextEditingController _title = TextEditingController();
   final TextEditingController _isi = TextEditingController();
+  bool _isDataLoaded = false;
   bool isError = false;
+  String msg = "";
+
+  Future<void> _editHandler(BuildContext context) async {
+    try {
+      final Map<String, dynamic> response = await TodoApi.editTodo(
+        (widget.id).toString(),
+        _title.text,
+        _isi.text,
+      );
+      final status = response["status"];
+      msg = response["message"];
+
+      if (status == "Success") {
+        if (!context.mounted) return;
+        Navigator.pop(context, msg);
+      } else {
+        throw Exception(msg);
+      }
+    } catch (e) {
+      setState(() => isError = true);
+      if (!context.mounted) return;
+      SnackBar snackBar = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(snackBar);
+    }
+  }
 
   Future? _future;
 
@@ -42,17 +70,73 @@ class _EditPageState extends State<EditPage> {
         appBar: AppBar(title: const Text("Edit Todo")),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: ListView(scrollDirection: Axis.vertical, children: [
-            const SizedBox(height: 20),
-            _heading(),
-            _content(),
-            // _titleField(),
-            // _isiField(),
-            // _addButton(context),
-            const SizedBox(height: 20)
-          ]),
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            children: [
+              const SizedBox(height: 20),
+              _content(),
+              const SizedBox(height: 20)
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _content() {
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        final height = MediaQuery.of(context).size.height;
+        if (snapshot.hasError) {
+          return _buildError(snapshot.error.toString());
+        } else if (snapshot.hasData) {
+          if (!_isDataLoaded) {
+            _isDataLoaded = true;
+            final bool isError = snapshot.data["status"] == "Error";
+            if (isError) return _buildError(snapshot.data["message"]);
+
+            TodoItem todoModel = TodoItem.fromJson(snapshot.data);
+            _title.text = todoModel.title!;
+            _isi.text = todoModel.isi!;
+          }
+          return _form(context);
+        }
+        return _buildLoading(height * 0.65);
+      },
+    );
+  }
+
+  Widget _buildLoading(double height) {
+    return SizedBox(
+      height: height,
+      child: const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _buildError(String msg) {
+    return Container(
+      padding: const EdgeInsets.only(top: 4),
+      child: Text(
+        msg,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _form(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _heading(),
+        _titleField(),
+        _isiField(),
+        _editButton(context),
+      ],
     );
   }
 
@@ -72,30 +156,6 @@ class _EditPageState extends State<EditPage> {
     );
   }
 
-  Widget _content() {
-    return FutureBuilder(
-      future: _future,
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<dynamic> snapshot,
-      ) {
-        if (snapshot.hasError) {
-          return const Text("Error");
-        } else if (snapshot.hasData) {
-          TodoItem todoModel = TodoItem.fromJson(snapshot.data);
-          _title.text = todoModel.isi!;
-          print(_title.text);
-          return _titleField();
-          // Memasukkan list todo ke dalam todoList biar bisa di-search
-          // return _form(context, todoModel);
-        }
-        return Container(
-            margin: const EdgeInsets.only(top: 32),
-            child: const Center(child: CircularProgressIndicator()));
-      },
-    );
-  }
-
   Widget _titleField() {
     return Container(
       margin: const EdgeInsets.fromLTRB(1, 12, 1, 0),
@@ -104,6 +164,7 @@ class _EditPageState extends State<EditPage> {
           width: 1.75,
           strokeAlign: BorderSide.strokeAlignCenter,
         ),
+        color: isError ? errColor["bg"] : Colors.white,
       ),
       child: TextFormField(
         enabled: true,
@@ -118,6 +179,7 @@ class _EditPageState extends State<EditPage> {
           contentPadding: EdgeInsets.all(12),
           border: InputBorder.none,
         ),
+        style: TextStyle(color: isError ? errColor["reg"] : Colors.black),
       ),
     );
   }
@@ -130,6 +192,7 @@ class _EditPageState extends State<EditPage> {
           width: 1.75,
           strokeAlign: BorderSide.strokeAlignCenter,
         ),
+        color: isError ? errColor["bg"] : Colors.white,
       ),
       child: TextFormField(
         enabled: true,
@@ -145,16 +208,17 @@ class _EditPageState extends State<EditPage> {
           contentPadding: EdgeInsets.all(12),
           border: InputBorder.none,
         ),
+        style: TextStyle(color: isError ? errColor["reg"] : Colors.black),
       ),
     );
   }
 
-  Widget _addButton(BuildContext context) {
+  Widget _editButton(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 1),
       child: TextButton(
-        onPressed: () {},
-        child: const Text('Add Todo'),
+        onPressed: () => _editHandler(context),
+        child: const Text('Edit Todo'),
       ),
     );
   }
