@@ -6,7 +6,6 @@ import 'package:prak_tcc_fe_mobile/view/edit.dart';
 
 class HomePage extends StatefulWidget {
   final int page;
-
   const HomePage({super.key, this.page = 1});
 
   @override
@@ -31,11 +30,16 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(10),
           child: FloatingActionButton(
             onPressed: () async {
-              final shouldRefresh = await Navigator.push(
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AddPage()),
               );
-              if (shouldRefresh != null) {
+
+              if (result != null) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context)
+                  ..removeCurrentSnackBar()
+                  ..showSnackBar(SnackBar(content: Text(result)));
                 setState(() {});
                 _future = TodoApi.getTodo();
               }
@@ -209,12 +213,22 @@ class _HomePageState extends State<HomePage> {
             children: [
               Expanded(
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditPage(id: todo.id!),
-                        ));
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditPage(id: todo.id!),
+                      ),
+                    );
+
+                    if (result != null) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context)
+                        ..removeCurrentSnackBar()
+                        ..showSnackBar(SnackBar(content: Text(result)));
+                      setState(() {});
+                      _future = TodoApi.getTodo();
+                    }
                   },
                   child: const Text("Update"),
                 ),
