@@ -37,7 +37,6 @@ class _AddPageState extends State<AddPage> {
       }
     } catch (e) {
       setState(() => isError = false);
-      msg = "Can't connect to server.";
       SnackBar snackBar = SnackBar(content: Text(e.toString()));
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
