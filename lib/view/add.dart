@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:prak_tcc_fe_mobile/view/home.dart';
+import 'package:prak_tcc_fe_mobile/util/todo.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -13,9 +11,42 @@ class AddPage extends StatefulWidget {
 }
 
 class _AddPageState extends State<AddPage> {
+  final Map<String, Color> errColor = {
+    "bg": const Color.fromARGB(255, 255, 225, 230),
+    "reg": Colors.red.shade800
+  };
+  String msg = "";
   final TextEditingController _title = TextEditingController();
   final TextEditingController _isi = TextEditingController();
   bool isError = false;
+
+  Future<void> _addTodo(BuildContext context) async {
+    try {
+      final Map<String, dynamic> response = await TodoApi.addTodo(
+        _title.text,
+        _isi.text,
+      );
+      final status = response["status"];
+      msg = response["message"];
+
+      if (status == "Success") {
+        if (!context.mounted) return;
+        Navigator.pop(context, true);
+      } else {
+        setState(() => isError = true);
+      }
+    } catch (e) {
+      setState(() => isError = false);
+      msg = "Can't connect to server.";
+    } finally {
+      if (context.mounted) {
+        SnackBar snackBar = SnackBar(content: Text(msg));
+        ScaffoldMessenger.of(context)
+          ..removeCurrentSnackBar()
+          ..showSnackBar(snackBar);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -68,6 +99,7 @@ class _AddPageState extends State<AddPage> {
           width: 1.75,
           strokeAlign: BorderSide.strokeAlignCenter,
         ),
+        color: isError ? errColor["bg"] : Colors.white,
       ),
       child: TextFormField(
         enabled: true,
@@ -82,6 +114,7 @@ class _AddPageState extends State<AddPage> {
           contentPadding: EdgeInsets.all(12),
           border: InputBorder.none,
         ),
+        style: TextStyle(color: isError ? errColor["reg"] : Colors.black),
       ),
     );
   }
@@ -90,11 +123,11 @@ class _AddPageState extends State<AddPage> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 1),
       decoration: BoxDecoration(
-        border: Border.all(
-          width: 1.75,
-          strokeAlign: BorderSide.strokeAlignCenter,
-        ),
-      ),
+          border: Border.all(
+            width: 1.75,
+            strokeAlign: BorderSide.strokeAlignCenter,
+          ),
+          color: isError ? errColor["bg"] : Colors.white),
       child: TextFormField(
         enabled: true,
         controller: _isi,
@@ -109,6 +142,7 @@ class _AddPageState extends State<AddPage> {
           contentPadding: EdgeInsets.all(12),
           border: InputBorder.none,
         ),
+        style: TextStyle(color: isError ? errColor["reg"] : Colors.black),
       ),
     );
   }
@@ -117,7 +151,7 @@ class _AddPageState extends State<AddPage> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 1),
       child: TextButton(
-        onPressed: () {},
+        onPressed: () => _addTodo(context),
         child: const Text('Add Todo'),
       ),
     );

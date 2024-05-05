@@ -30,11 +30,15 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: Container(
           padding: const EdgeInsets.all(10),
           child: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              final shouldRefresh = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AddPage()),
               );
+              if (shouldRefresh != null) {
+                setState(() {});
+                _future = TodoApi.getTodo();
+              }
             },
             foregroundColor: Colors.black,
             backgroundColor: Colors.white,
