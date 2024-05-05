@@ -184,17 +184,16 @@ class _HomePageState extends State<HomePage> {
         : ListView.builder(
             itemCount: (keyword != "") ? filteredTodo.length : todoList.length,
             itemBuilder: (BuildContext context, int index) {
-              return _buildTodoItem(
-                context,
-                (keyword != "") ? filteredTodo[index] : todoList[index],
-              );
+              List<TodoItem> list = (keyword != "") ? filteredTodo : todoList;
+              bool isLast = list.last == todoList[index];
+              return _buildTodoItem(context, list[index], isLast);
             },
           );
   }
 
-  Widget _buildTodoItem(BuildContext context, TodoItem todo) {
+  Widget _buildTodoItem(BuildContext context, TodoItem todo, bool isLast) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(1, 16, 1, 0),
+      margin: EdgeInsets.fromLTRB(1, 16, 1, isLast ? 16 : 0),
       child: Column(
         children: [
           TextButton(
