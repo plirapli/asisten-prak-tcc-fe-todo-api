@@ -11,10 +11,7 @@ class TodoApi {
 
   static Future<Map<String, dynamic>> getTodoById(String id) async {
     final http.Response response = await http.get(Uri.parse(url + id));
-    final bool isError = response.statusCode != 200;
-    return isError
-        ? jsonDecode(response.body)
-        : jsonDecode(response.body)["data"];
+    return jsonDecode(response.body);
   }
 
   static Future<Map<String, dynamic>> addTodo(String title, String isi) async {

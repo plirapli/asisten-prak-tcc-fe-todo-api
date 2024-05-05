@@ -96,7 +96,7 @@ class _EditPageState extends State<EditPage> {
             final bool isError = snapshot.data["status"] == "Error";
             if (isError) return _buildError(snapshot.data["message"]);
 
-            TodoItem todoModel = TodoItem.fromJson(snapshot.data);
+            TodoItem todoModel = TodoItem.fromJson(snapshot.data["data"]);
             _title.text = todoModel.title!;
             _isi.text = todoModel.isi!;
           }

@@ -12,6 +12,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String keyword = "";
+  Future? _future;
+  List<TodoItem> filteredTodo = [];
+  List<TodoItem> todoList = [];
+  List<int> isExpanded = [];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -21,8 +27,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(children: [
             _heading(context),
-            _buildDetailUser(),
-            const SizedBox(height: 20)
+            _buildTodoList(),
           ]),
         ),
         floatingActionButton: Container(
@@ -59,17 +64,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future? _future;
-
   @override
   void initState() {
     super.initState();
     _future = TodoApi.getTodo();
   }
-
-  String keyword = "";
-  List<TodoItem> filteredTodo = [];
-  List<TodoItem> todoList = [];
 
   void _search(String val) {
     keyword = val;
@@ -128,7 +127,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildDetailUser() {
+  Widget _buildTodoList() {
     return Expanded(
       child: FutureBuilder(
         future: _future,
@@ -137,12 +136,29 @@ class _HomePageState extends State<HomePage> {
             return const Text("Error");
           } else if (snapshot.hasData) {
             Todos todoModel = Todos.fromJson(snapshot.data);
+            final bool isError = todoModel.status == "Error";
+            if (isError) return _buildError(todoModel.message!);
+
             // Memasukkan list todo ke dalam todoList biar bisa di-search
             todoList = [...?todoModel.data];
             return _buildSuccess(context, todoModel);
           }
           return const Center(child: CircularProgressIndicator());
         },
+      ),
+    );
+  }
+
+  Widget _buildError(String msg) {
+    return Container(
+      padding: const EdgeInsets.only(top: 4),
+      child: Text(
+        msg,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -168,7 +184,7 @@ class _HomePageState extends State<HomePage> {
         : ListView.builder(
             itemCount: (keyword != "") ? filteredTodo.length : todoList.length,
             itemBuilder: (BuildContext context, int index) {
-              return _buildItemUser(
+              return _buildTodoItem(
                 context,
                 (keyword != "") ? filteredTodo[index] : todoList[index],
               );
@@ -176,13 +192,20 @@ class _HomePageState extends State<HomePage> {
           );
   }
 
-  Widget _buildItemUser(BuildContext context, TodoItem todo) {
+  Widget _buildTodoItem(BuildContext context, TodoItem todo) {
     return Container(
       margin: const EdgeInsets.fromLTRB(1, 16, 1, 0),
       child: Column(
         children: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              if (isExpanded.contains(todo.id)) {
+                isExpanded.remove(todo.id!);
+              } else {
+                isExpanded.add(todo.id!);
+              }
+              setState(() {});
+            },
             style: TextButton.styleFrom(padding: const EdgeInsets.all(14)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -196,7 +219,9 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Text(
                   todo.isi!,
-                  overflow: TextOverflow.ellipsis,
+                  overflow: isExpanded.contains(todo.id)
+                      ? TextOverflow.clip
+                      : TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 14,
                   ),
