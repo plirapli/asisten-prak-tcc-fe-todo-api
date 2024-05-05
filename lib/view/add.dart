@@ -15,12 +15,12 @@ class _AddPageState extends State<AddPage> {
     "bg": const Color.fromARGB(255, 255, 225, 230),
     "reg": Colors.red.shade800
   };
-  String msg = "";
   final TextEditingController _title = TextEditingController();
   final TextEditingController _isi = TextEditingController();
+  String msg = "";
   bool isError = false;
 
-  Future<void> _addTodo(BuildContext context) async {
+  Future<void> _addHandler(BuildContext context) async {
     try {
       final Map<String, dynamic> response = await TodoApi.addTodo(
         _title.text,
@@ -31,20 +31,18 @@ class _AddPageState extends State<AddPage> {
 
       if (status == "Success") {
         if (!context.mounted) return;
-        Navigator.pop(context, true);
+        Navigator.pop(context, msg);
       } else {
-        setState(() => isError = true);
+        throw Exception(msg);
       }
     } catch (e) {
       setState(() => isError = false);
       msg = "Can't connect to server.";
-    } finally {
-      if (context.mounted) {
-        SnackBar snackBar = SnackBar(content: Text(msg));
-        ScaffoldMessenger.of(context)
-          ..removeCurrentSnackBar()
-          ..showSnackBar(snackBar);
-      }
+      SnackBar snackBar = SnackBar(content: Text(e.toString()));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(snackBar);
     }
   }
 
@@ -151,7 +149,7 @@ class _AddPageState extends State<AddPage> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 1),
       child: TextButton(
-        onPressed: () => _addTodo(context),
+        onPressed: () => _addHandler(context),
         child: const Text('Add Todo'),
       ),
     );
