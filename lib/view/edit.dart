@@ -202,7 +202,7 @@ class _EditPageState extends State<EditPage> {
             if (isError) isError = false;
           });
         },
-        maxLines: 16,
+        maxLines: 18,
         decoration: const InputDecoration(
           hintText: 'Enter a description',
           contentPadding: EdgeInsets.all(12),
@@ -218,7 +218,7 @@ class _EditPageState extends State<EditPage> {
       margin: const EdgeInsets.symmetric(horizontal: 1),
       child: TextButton(
         onPressed: () => _editHandler(context),
-        child: const Text('Edit Todo'),
+        child: const Text('Save Todo'),
       ),
     );
   }
