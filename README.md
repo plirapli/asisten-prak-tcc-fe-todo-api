@@ -1,16 +1,15 @@
 # prak_tcc_fe_mobile
 
-A new Flutter project.
+Implementasi (Front-End) dari web service yang telah dibuat pada repository berikut.
 
-## Getting Started
+[Web Service Todo List](https://github.com/plirapli/asisten-prak-tcc-7-api)
 
-This project is a starting point for a Flutter application.
+## How to start
 
-A few resources to get you started if this is your first Flutter project:
+1. Nyalakan web service yang terdapat pada [repository ini](https://github.com/plirapli/asisten-prak-tcc-7-api).
+2. Jalankan project flutter (`flutter run`)
+3. 🏃🏻‍♂️
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Screenshot &nbsp; 📸
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![app screenshot](ss.png)
