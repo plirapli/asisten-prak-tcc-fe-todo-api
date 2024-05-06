@@ -131,7 +131,7 @@ class _AddPageState extends State<AddPage> {
             if (isError) isError = false;
           });
         },
-        maxLines: 16,
+        maxLines: 18,
         decoration: const InputDecoration(
           hintText: 'Enter a description',
           contentPadding: EdgeInsets.all(12),
