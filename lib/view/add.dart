@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:prak_tcc_fe_mobile/theme.dart';
 import 'package:prak_tcc_fe_mobile/util/todo.dart';
 
 class AddPage extends StatefulWidget {
@@ -10,10 +11,6 @@ class AddPage extends StatefulWidget {
 }
 
 class _AddPageState extends State<AddPage> {
-  final Map<String, Color> errColor = {
-    "bg": const Color.fromARGB(255, 255, 225, 230),
-    "reg": Colors.red.shade800
-  };
   final TextEditingController _title = TextEditingController();
   final TextEditingController _isi = TextEditingController();
   bool isError = false;
@@ -95,7 +92,7 @@ class _AddPageState extends State<AddPage> {
           width: 1.75,
           strokeAlign: BorderSide.strokeAlignCenter,
         ),
-        color: isError ? errColor["bg"] : Colors.white,
+        color: isError ? MyTheme.errorColor["bg"] : Colors.white,
       ),
       child: TextFormField(
         enabled: true,
@@ -110,7 +107,9 @@ class _AddPageState extends State<AddPage> {
           contentPadding: EdgeInsets.all(12),
           border: InputBorder.none,
         ),
-        style: TextStyle(color: isError ? errColor["reg"] : Colors.black),
+        style: TextStyle(
+          color: isError ? MyTheme.errorColor["normal"] : Colors.black,
+        ),
       ),
     );
   }
@@ -123,7 +122,7 @@ class _AddPageState extends State<AddPage> {
             width: 1.75,
             strokeAlign: BorderSide.strokeAlignCenter,
           ),
-          color: isError ? errColor["bg"] : Colors.white),
+          color: isError ? MyTheme.errorColor["bg"] : Colors.white),
       child: TextFormField(
         enabled: true,
         controller: _isi,
@@ -138,7 +137,9 @@ class _AddPageState extends State<AddPage> {
           contentPadding: EdgeInsets.all(12),
           border: InputBorder.none,
         ),
-        style: TextStyle(color: isError ? errColor["reg"] : Colors.black),
+        style: TextStyle(
+          color: isError ? MyTheme.errorColor["normal"] : Colors.black,
+        ),
       ),
     );
   }

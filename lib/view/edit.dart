@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:prak_tcc_fe_mobile/model/todo.dart';
+import 'package:prak_tcc_fe_mobile/theme.dart';
 import 'package:prak_tcc_fe_mobile/util/todo.dart';
 
 class EditPage extends StatefulWidget {
@@ -12,15 +13,12 @@ class EditPage extends StatefulWidget {
 }
 
 class _EditPageState extends State<EditPage> {
-  final Map<String, Color> errColor = {
-    "bg": const Color.fromARGB(255, 255, 225, 230),
-    "reg": Colors.red.shade800
-  };
   final TextEditingController _title = TextEditingController();
   final TextEditingController _isi = TextEditingController();
   bool _isDataLoaded = false;
   bool isError = false;
   String msg = "";
+  Future? _future;
 
   Future<void> _editHandler(BuildContext context) async {
     try {
@@ -47,8 +45,6 @@ class _EditPageState extends State<EditPage> {
         ..showSnackBar(snackBar);
     }
   }
-
-  Future? _future;
 
   @override
   void initState() {
@@ -164,7 +160,7 @@ class _EditPageState extends State<EditPage> {
           width: 1.75,
           strokeAlign: BorderSide.strokeAlignCenter,
         ),
-        color: isError ? errColor["bg"] : Colors.white,
+        color: isError ? MyTheme.errorColor["bg"] : Colors.white,
       ),
       child: TextFormField(
         enabled: true,
@@ -179,7 +175,9 @@ class _EditPageState extends State<EditPage> {
           contentPadding: EdgeInsets.all(12),
           border: InputBorder.none,
         ),
-        style: TextStyle(color: isError ? errColor["reg"] : Colors.black),
+        style: TextStyle(
+          color: isError ? MyTheme.errorColor["normal"] : Colors.black,
+        ),
       ),
     );
   }
@@ -192,7 +190,7 @@ class _EditPageState extends State<EditPage> {
           width: 1.75,
           strokeAlign: BorderSide.strokeAlignCenter,
         ),
-        color: isError ? errColor["bg"] : Colors.white,
+        color: isError ? MyTheme.errorColor["bg"] : Colors.white,
       ),
       child: TextFormField(
         enabled: true,
@@ -208,7 +206,9 @@ class _EditPageState extends State<EditPage> {
           contentPadding: EdgeInsets.all(12),
           border: InputBorder.none,
         ),
-        style: TextStyle(color: isError ? errColor["reg"] : Colors.black),
+        style: TextStyle(
+          color: isError ? MyTheme.errorColor["normal"] : Colors.black,
+        ),
       ),
     );
   }

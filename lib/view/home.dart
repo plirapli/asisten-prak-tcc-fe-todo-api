@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Text("Error");
+            return Text("Error: ${snapshot.error}");
           } else if (snapshot.hasData) {
             Todos todoModel = Todos.fromJson(snapshot.data);
             final bool isError = todoModel.status == "Error";

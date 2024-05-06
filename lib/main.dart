@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Prak. TCC - Web Service',
-      theme: themeData,
+      theme: MyTheme.themeData,
       home: const HomePage(),
       debugShowCheckedModeBanner: false,
     );
